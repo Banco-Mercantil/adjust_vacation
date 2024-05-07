@@ -13,6 +13,8 @@ copiar arquivo para a pasta : K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_
 
 abrir projeto no vs code
 
+adicionar o profile do arquivo no profile do seu usuario, salvar e abrir projeto novamente.
+
 substituir o cabeçalho para: DTA_SOLICITACAO,E_MAIL,MATRICULA,CAMPANHA,COLAB_PROMOVIDO,NOM_PTO_TRANSF,DTA_SAIDA,DTA_RETORNO
 
 trocar ; para ,
@@ -26,9 +28,15 @@ ORDER BY DTA_SOLICITACAO DESC
 
 migrar atualização para o diretorio da AWS: conectar ao SSH
 
-ir para o diretorio /home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas/seeds e substituir o arquivo
+ir para o diretorio /home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas e substituir o arquivo
 
-dar o buil 
+dar o build_push_dev.sh
+
+executar o commit
+
+verificar a confirmação no devops
+
+corrigir a tabela de participantes de dia util e dar um truncate nas metas individuais
 
 3 - int_metas__individuais
 
