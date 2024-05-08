@@ -5,6 +5,8 @@
   By: Pâmella
 */
 
+SET periodo = '%CAMPANHA MAI/24%';
+
 WITH 
 /*Retorna o registro da solicitação de férias mais atual do colaborador.*/
 maximo_ferias AS
@@ -16,7 +18,7 @@ maximo_ferias AS
     FROM sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.int_forms_ferias_afastamentos AS tabela
     
     WHERE 
-        tabela.campanha LIKE '%CAMPANHA MAI/24%'
+        tabela.campanha LIKE $periodo
         AND tabela.dta_saida IS NOT NULL 
         AND tabela.dta_retorno IS NOT NULL 
         
