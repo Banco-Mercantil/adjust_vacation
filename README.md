@@ -17,7 +17,7 @@ Em caso de férias e transferências
 
 4 - mudar nome para int_forms_ferias_afastamentos salvar como csv
 
-copiar arquivo para a pasta : K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds e K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\Ferias Rede
+copiar arquivo para a pasta : K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds
 
 abrir projeto no vs code
 
@@ -29,22 +29,34 @@ trocar ; para ,
 
 salvar arquivo
 
-rodar o comando dbt seed --select "nome_arquivo"(dbt seed --select "country_codes")
+rodar o comando dbt seed --select "nome_arquivo" (dbt seed --select "country_codes")
 
 VERIFICAR NO SNOWFLAKE SE A TABELA FOI ATUALIZADA SELECT * FROM SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS
 ORDER BY DTA_SOLICITACAO DESC
 
 migrar atualização para o diretorio da AWS: conectar ao SSH
 
+dar o camando pull para atualizar o repositorio da nuvem em sua maquina
+
 ir para o diretorio /home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas e substituir o arquivo
 
-dar o build_push_dev.sh
+dar o ./build_push_dev.sh
 
 executar o commit
 
 verificar a confirmação no devops
 
-corrigir a tabela de participantes de dia util e dar um truncate nas metas individuais
+# corrigir a tabela de participantes de dia util e dar um truncate nas metas individuais:
+
+
+
+
+
+
+
+
+
+
 
 3 - int_metas__individuais
 
