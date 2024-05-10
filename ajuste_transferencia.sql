@@ -1,11 +1,13 @@
 /*
-*
+    Consulta atualiza o campo num_dnd da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
+    a partir da data, na qual, o colaborador foi transferido de unidade (PA). Essa tabela armazena os dias úteis do mês em que cada 
+    colaborador estava ativo no ponto de atendimento. Ela, por sua vez, é usada como base para o cálculo de metas indivíduais.
+    By: Pâmella
 */
-
-
 
 SET periodo = '%CAMPANHA MAI/24%';
 
+/*Retorna o registro da solicitação de transferência mais atual do colaborador.*/
 WITH 
 maximo_transferencia AS
 (  
@@ -25,6 +27,8 @@ maximo_transferencia AS
     GROUP BY ALL
 )
 
+/*Retorna os demais campos do registro de solicitação de transferência mais atual do colaborador e converte o código do ponto de 
+atendimento em inteiro.*/
 ,transferencia AS
 (
     SELECT 
@@ -41,6 +45,9 @@ maximo_transferencia AS
         AND tabela.dta_solicitacao = maximo_transferencia.dta_solicitacao
 )
 
+/*Retorna os dados dos colaboradores que podem constar na tabela 
+"sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util", ou seja, apenas gerente de contas e produtos e 
+agentes comerciais. Isso porque, apenas esses cargos possuem metas individuais.*/
 ,empregado AS
 (
     SELECT
@@ -69,6 +76,9 @@ maximo_transferencia AS
        AND (cargo_basico.idt_cgo_bse IN (2764,2067,2344,3133,3134))) -- gerente de agencia nao entra na tabela de dias uteis, gerente de contas e produtos e agentes comerciais apenas que entram na tabela de dias uteis.
 )
 
+/*Retorna os reigstros da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" nos quais o 
+colaborador passou a estar ativo em outro ponto de atendimento, retirando da consulta as solicitações de colaboradores que não se 
+enquadram nos cargos de gerente de contas e produtos e agentes comerciais.*/
 ,dias_uteis AS
 (
     SELECT 
@@ -95,13 +105,12 @@ maximo_transferencia AS
         ON empregado.num_mat_epg = CAST(RIGHT(transferencia.matricula,5) AS INT)
 
     -- LEFT JOIN data_transferencia
-    --     ON data_transferencia.matricula = transferencia.matricula
-    --     ACRESCENTAR JOIN COM DATA DE TRASFERÊNCIA DO COLABORADOR
+    --     ON data_transferencia.matricula = transferencia.matricula -- ACRESCENTAR JOIN COM DATA DE TRASFERÊNCIA DO COLABORADOR
     
     LEFT JOIN sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
         ON int_participantes_dia_util.matricula = transferencia.matricula
         AND int_participantes_dia_util.data_movimento >= '2024-05-02' -- ACRESCENTAR DATA DE TRANSFERENCIA
-        AND int_participantes_dia_util.num_dnd <> transferencia.nom_pto_transf -- garante que apenas as solicitações de transferencias venham na consulta
+        AND int_participantes_dia_util.num_dnd <> transferencia.nom_pto_transf -- garante que apenas as solicitações de transferências venham na consulta
         
     WHERE 
         int_participantes_dia_util.matricula IS NOT NULL -- garante que não venha casos de inserção de colaborador na tabela de dia_util
@@ -115,6 +124,9 @@ maximo_transferencia AS
 SELECT * FROM dias_uteis -- apenas para visualização
 
 
+/* Atualização do campo num_dnd da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
+do período em que o colaborador passou a atender em outro ponto de antedimento, ou seja, a partir do momento de sua transferência.*/
+    
 UPDATE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
 SET int_participantes_dia_util.num_dnd = dias_uteis.nom_pto_transf
 
