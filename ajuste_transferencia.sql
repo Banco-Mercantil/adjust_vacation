@@ -70,10 +70,12 @@ agentes comerciais. Isso porque, apenas esses cargos possuem metas individuais.*
       ON cargo_basico.idt_cgo_bse = cargo.idt_cgo_bse
 
     WHERE 
-       ((empregado.num_cen_cst IS NOT NULL)
-       AND (empregado.dta_dms IS NULL)
-       AND (empregado.idt_emp IN ('2','27'))
-       AND (cargo_basico.idt_cgo_bse IN (2764,2067,2344,3133,3134))) -- gerente de agencia nao entra na tabela de dias uteis, gerente de contas e produtos e agentes comerciais apenas que entram na tabela de dias uteis.
+    (
+        (empregado.num_cen_cst IS NOT NULL)
+        AND (empregado.dta_dms IS NULL)
+        AND (empregado.idt_emp IN ('2','27'))
+        AND (cargo_basico.idt_cgo_bse IN (2764,2067,2344,3133,3134))
+    ) -- gerente de agencia nao entra na tabela de dias uteis, gerente de contas e produtos e agentes comerciais apenas que entram na tabela de dias uteis.
 )
 
 /*Retorna os reigstros da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" nos quais o 
