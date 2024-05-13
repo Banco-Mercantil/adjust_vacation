@@ -19,6 +19,7 @@ maximo_ferias AS
     
     WHERE 
         tabela.campanha LIKE $periodo
+        AND tabela.nom_pto_transf IS NULL
         AND tabela.dta_saida IS NOT NULL 
         AND tabela.dta_retorno IS NOT NULL 
         
@@ -32,7 +33,6 @@ o formato DATE yyyy-mm-dd.*/
     SELECT 
         tabela.campanha
         ,UPPER(RTRIM(LTRIM(tabela.matricula))) AS matricula
-        ,tabela.nom_pto_transf
         ,TO_DATE(tabela.dta_saida,'DD/MM/YYYY') AS dta_saida -- Convertendo datas de 'dd/MM/yyyy' para DATE yyyy-mm-dd
         ,TO_DATE(tabela.dta_retorno,'DD/MM/YYYY') AS dta_retorno -- Convertendo datas de 'dd/MM/yyyy' para DATE yyyy-mm-dd
         ,tabela.dta_solicitacao
@@ -73,9 +73,9 @@ produtos e agentes comerciais. Isso porque, apenas esses cargos possuem metas in
     (
       (empregado.num_cen_cst IS NOT NULL)
       AND (empregado.dta_dms IS NULL)
-      AND (empregado.idt_emp IN ('2','27'))
-      AND (cargo_basico.idt_cgo_bse IN (2764,2067,2344,3133,3134))
-    ) -- gerente de agencia nao entra na tabela de dias uteis, gerente de contas e produtos e agentes comerciais apenas que entram na tabela de dias uteis.
+      AND (empregado.idt_emp IN ('2', '27'))
+      AND (cargo_basico.idt_cgo_bse IN (2764, 2067, 2344, 3133, 3134))
+    ) -- gerente de agencia nao entra na tabela de dias uteis. Gerente de contas e produtos e agentes comerciais apenas que entram na tabela de dias uteis.
 )
 
 /*Retorna os reigstros da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" nos 
