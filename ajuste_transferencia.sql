@@ -125,23 +125,23 @@ enquadram nos cargos de gerente de contas e produtos e agentes comerciais.*/
 
 SELECT * FROM dias_uteis -- apenas para visualização
 
-
 /* Atualização do campo num_dnd da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
 do período em que o colaborador passou a atender em outro ponto de antedimento, ou seja, a partir do momento de sua transferência.*/
     
 UPDATE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
 SET int_participantes_dia_util.num_dnd = dias_uteis.nom_pto_transf
 
-FROM sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
-
-INNER JOIN dias_uteis
-    ON dias_uteis.matricula = int_participantes_dia_util.matricula
-    -- ACRESCENTAR DATA MOVIMENTO COMO CHAVE
+FROM dias_uteis
   
 WHERE 
     int_participantes_dia_util.matricula = dias_uteis.matricula
     AND int_participantes_dia_util.data_movimento = dias_uteis.data_movimento
     AND int_participantes_dia_util.num_dnd <> dias_uteis.nom_pto_transf
+
+
+
+
+
 
 
 
