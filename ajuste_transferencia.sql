@@ -1,15 +1,15 @@
 /*
-    Consulta atualiza o campo num_dnd da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
-    a partir da data, na qual, o colaborador foi transferido de unidade (PA). Essa tabela armazena os dias úteis do mês em que cada 
+    Consulta atualiza o campo "num_dnd" da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
+    de acordo com a solicitação de transferência da unidade de atendimento (PA). Essa tabela armazena os dias úteis do mês em que cada 
     colaborador estava ativo no ponto de atendimento. Ela, por sua vez, é usada como base para o cálculo de metas indivíduais.
     By: Pâmella
 */
 
 SET periodo = '%CAMPANHA MAI/24%';
 
-/* Atualização do campo num_dnd da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
-do período em que o colaborador passou a atender em outro ponto de antedimento, ou seja, a partir do momento de sua transferência.*/
-UPDATE sdx_excelencia_comercial.camp_incentivo__rede_vigente.numero_ponto_atendimento AS int_participantes_dia_util
+/*Atualização do campo "num_dnd" da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
+de acordo com a solicitação de sua transferência de ponto de atendimento.*/
+UPDATE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
 SET int_participantes_dia_util.num_dnd = sub.nom_pto_transf
 FROM
 (
@@ -116,24 +116,24 @@ FROM
         WHERE 
             int_participantes_dia_util.matricula IS NOT NULL -- garante que não venha casos de inserção de colaborador na tabela de dia_util
     )
-
+    
+    /*Retorna os dados da subquery "dias_uteis" aptos a serem excluídos da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util"*/
     ,dados_deletados AS
     (
         SELECT dias_uteis.* FROM dias_uteis
 
-        INNER JOIN sdx_excelencia_comercial.camp_incentivo__rede_vigente.numero_ponto_atendimento AS int_participantes_dia_util
+        INNER JOIN sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util AS int_participantes_dia_util
             ON int_participantes_dia_util.matricula = dias_uteis.matricula_dia_util
             AND int_participantes_dia_util.data_movimento = dias_uteis.data_movimento
             AND int_participantes_dia_util.num_dnd <> dias_uteis.nom_pto_transf
     )
     SELECT * FROM dias_uteis
 ) AS sub
-
   
 WHERE 
-    int_participantes_dia_util.matricula = dias_uteis.matricula
-    AND int_participantes_dia_util.data_movimento = dias_uteis.data_movimento
-    AND int_participantes_dia_util.num_dnd <> dias_uteis.nom_pto_transf
+    int_participantes_dia_util.matricula = sub.matricula_dia_util
+    AND int_participantes_dia_util.data_movimento = sub.data_movimento
+    AND int_participantes_dia_util.num_dnd <> sub.nom_pto_transf
 
 
 
