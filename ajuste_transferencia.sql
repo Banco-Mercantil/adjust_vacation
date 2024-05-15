@@ -5,7 +5,42 @@
     By: Pâmella
 */
 
-SET periodo = '%CAMPANHA MAI/24%';
+/*Cria a variavél "periodo" e atribui o valor do mês seguinte*/
+DECLARE
+    periodo string(20);
+BEGIN
+    LET campanha string(30) := 
+        (
+            SELECT
+                CASE
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Jan' 
+                        THEN '%CAMPANHA JAN/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Feb' 
+                        THEN '%CAMPANHA FEV/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Mar' 
+                        THEN '%CAMPANHA MAR/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Apr' 
+                        THEN '%CAMPANHA ABR/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'May' 
+                        THEN '%CAMPANHA MAI/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Jun' 
+                        THEN '%CAMPANHA JUN/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Jul' 
+                        THEN '%CAMPANHA JUL/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Aug' 
+                        THEN '%CAMPANHA AGO/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Sep' 
+                        THEN '%CAMPANHA SET/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Oct' 
+                        THEN '%CAMPANHA OUT/24%'
+                    WHEN monthname(DATEADD(month, 1, current_date())) = 'Nov' 
+                        THEN '%CAMPANHA NOV/24%'
+                ELSE '%CAMPANHA DEZ/24%'
+            END
+        );
+    periodo := campanha;
+    RETURN periodo;
+END;
 
 /*Atualização do campo "num_dnd" da tabela "sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util" 
 de acordo com a solicitação de sua transferência de ponto de atendimento.*/
