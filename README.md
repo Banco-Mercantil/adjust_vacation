@@ -145,20 +145,28 @@ Com a atualização dos nos registros de férias, afawstamentos e transferência
 
 A começar pelo ajuste das solicitações de férias dos colaboradores, acesse a plataforma do [Snowflake](https://app.snowflake.com/kdumwgr/dda57677/w4yRXGS5uLsB/query). Vá para a guia *Worshets*, abra um novo *notebook* para digitar códigos em *SQL* e certifique de indicar a role e o data warehouse corretos:
 
+``
+Role: SNFLK_AD_GERENCIA_EXCELENCIA_COMERCIAL
+Data warehouse: WH_DEV
+``
 
-![An image of foo bar for GitHub Free, GitHub Pro, GitHub Team, and GitHub Enterprise Cloud](C:\Users\B045523\Pictures\Screenshots\Captura de tela 2024-05-16 183044.png)
+Em seguida, copie e cole o trecho de código contido no arquivo [ajuste_ferias](https://github.com/Banco-Mercantil/adjust_vacation_transfer/blob/main/ajuste_ferias.sql). 
 
-
-
+Ao executar a query, todos os registros que compreende o espaço de tempo no qual o colaborador estará indisponível no ponto de atendimento serão deletados da tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``. 
 
 
 ### Transferência de Agencia:
 
+O mesmo processo deverá ser executado para o tratamento dos casos de transferência, porém, aqui os registros não serão deletados, apenas sofrerão uma atualização no campo que referencia o código do ponto de atendimento do colaborador. 
+
+Abra um novo *notebook*, agora para executar um segundo trecho de código em *SQL* para a tratativa das solicitações de transferências. 
+
+Copie e cole o trecho de código contido no arquivo [ajuste_transferencia](https://github.com/Banco-Mercantil/adjust_vacation_transfer/blob/main/ajuste_transferencia.sql).
+
+Ao executar a query, os registros dos colaboradores serão atualizados com novas informações do ponto de atendimento para o qual este irá atuar da tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``.
 
 
-
-
-# corrigir a tabela de participantes de dia util e dar um truncate nas metas individuais:
+## Dar um truncate nas metas individuais:
 
 
 
