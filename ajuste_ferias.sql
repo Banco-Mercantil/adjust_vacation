@@ -5,6 +5,7 @@ Ela, por sua vez, é usada como base para o cálculo de metas indivíduais.
 By: Pâmella
 */
 
+/*Cria a variavél "periodo" e atribui o valor do mês seguinte*/
 DECLARE
     periodo string(20); --DEFAULT monthname(DATEADD(month, 1, current_date()));
 BEGIN
