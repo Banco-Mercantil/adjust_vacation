@@ -23,6 +23,7 @@ O controle de agentes ativos por ponto de atendimento é armazenado na tabela *s
 
 As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas naas quais o colaborador estará indisponível no ponto de atendimento.
 
+
 ### Formulário:
 
 O primeiro passo envolve uma tratativa do formulário para que este possa ser compilado devidamente. Para acessá-lo, basta clicar no seguinte link e você será redirecionado para sua página. 
@@ -31,43 +32,51 @@ O primeiro passo envolve uma tratativa do formulário para que este possa ser co
 
 Já na página, você poderá ter acesso ás respostas dos responsáveis de cada ponto de atendimento com suas respectivas solicitações. Clicando em *Link para o app Planilhas* o arquivo será baixado para sua máquina.
 
-O primeiro tratamento a se fazer é ajustar a coluna de **matrícula**. Este campo pode conter valores com espaços, caracteres em minúsculos e a mais. Padronize este campo removendo espaços em branco, tanto a esquerda quanto a direita, deixando os caracteres em maiúsculo e com o tamanho igual a 7. Registros com tamanhos menores não deverão ser considerados.  
+O primeiro tratamento a se fazer é eliminar todas as respostas das campanhas anteriores, deixando apenas os novos registros da campanha vigente. Faça isso, filtrando a coluna **campanha** com todos os registros com excessão da camapanha do mês vigente. Posteriormente, exclua todas as linhas. Limpe o filtro e agora você terá apenas as solicitações do mês. 
+
+Em seguida, é necessário ajustar a coluna de **matrícula**. Este campo pode conter valores com espaços, caracteres em minúsculos e a mais. Padronize este campo removendo espaços em branco, tanto a esquerda quanto a direita, deixando os caracteres em maiúsculo e com o tamanho igual a 7. Registros com tamanhos menores não deverão ser considerados.  
 
 O próximo tratamento será uma verificação nas solicitações de transferência. Para esse tipo de solicitação, os campos referentes a data deverão permanecer em branco. Execute um filtro na coluna onde o ponto de atendimento é preenchido, filtre todos os valores diferentes de vazio. Estas são as solicitações de transferência. Para esses casos, exclua todos os valores das colunas de data, deixando-os em branco. 
 
 Se tratando dos campos de datas, certifique-se que o formato do campo seja equivalente ao exemplo a seguir:
 
 ``
-Exemplo de formato:
-01/01/2024
+Exemplo de formato: 01/01/2024
 ``
 
-Ao salvar o documento, altere seu nome para ``int_forms_ferias_afastamentos`` e o salve em formato ``.csv``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no Visual Studio Code.
+Ao salvar o documento, altere seu nome para ``int_forms_ferias_afastamentos`` e o salve em formato ``.csv``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no **Visual Studio Code**.
 
 
+## Arquivo .CSV:
+
+Feito isso, caso seja a primeira vez a se executar este projeto em sua máquina, será necessário configurar o arquivo ``profiles.yml``. Este arquivo se encontra no diretório ``C:\Users\XXXXXX\.dbt``. Copie o código contido no arquivo ``profile.yml`` do projeto ``dbt_marts_incrementais_campanhas`` e adicione-o no arquivo ``profiles.yml`` da sua máquina. Salve o arquivo e abra o projeto novamente. Caso não seja a primeira vez, ignore a etapa anterior e siga para os próximos passos.
+
+Abra o arquivo ``int_forms_ferias_afastamentos.csv`` no **VS Code**, substitua o cabeçalho do arquivo, ou seja, a primeira linha, para: 
+
+``DTA_SOLICITACAO,E_MAIL,MATRICULA,CAMPANHA,COLAB_PROMOVIDO,NOM_PTO_TRANSF,DTA_SAIDA,DTA_RETORNO``
+
+Agora iremos substituir o ponto e vírgula (;) por apenas vígula (,). É possível fazer isso com o atalho ``Ctrl + f``. Um box será aberto no canto superior, clique na seta que antecede o box de escrita. Um novo box irá aparecer. No primeiro, digite o valor no qual deseja buscar para substituir, no caso, o ponto e vírgula (;). No segundo, digite o valor o qual você deseja que seja o substituto, no caso, a vírgula (,). Salve o arquivo.
 
 
-### Férias ou Afastamentos:
+## Projeto:
 
 
-### Transferência de Agencia:
+Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*. O comando ``dbt seed`` irá carregar os arquivos ``.csv`` localizados no diretório ``seed-paths`` do projeto dbt ``dbt_marts_incrementais_campanhas``. Logo, abra o terminal do **VS Code** e execute o seguinte trecho de código:
 
+``
+dbt seed --select "int_forms_ferias_afastamentos"
+``
 
+Afim de verificar as novas atualizações, basta consultar, no **Snowflake**, a tabela ``SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS``. Em um novo *notebook* cole a seguinte query:
 
-adicionar o profile do arquivo no profile do seu usuario, salvar e abrir projeto novamente.
-
-substituir o cabeçalho para: DTA_SOLICITACAO,E_MAIL,MATRICULA,CAMPANHA,COLAB_PROMOVIDO,NOM_PTO_TRANSF,DTA_SAIDA,DTA_RETORNO
-
-trocar ; para ,
-
-salvar arquivo
-
-rodar o comando dbt seed --select "nome_arquivo" (dbt seed --select "country_codes")
-
-VERIFICAR NO SNOWFLAKE SE A TABELA FOI ATUALIZADA SELECT * FROM SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS
+``
+SELECT * FROM SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS
 ORDER BY DTA_SOLICITACAO DESC
+``
 
-migrar atualização para o diretorio da AWS: conectar ao SSH
+Com os novos registros da campanha vigente na tabela, iremos executar essas alterações no diretório da **AWS**. 
+
+conectar ao SSH
 
 dar o camando pull para atualizar o repositorio da nuvem em sua maquina
 
@@ -78,6 +87,17 @@ dar o ./build_push_dev.sh
 executar o commit
 
 verificar a confirmação no devops
+
+
+
+### Férias ou Afastamentos:
+
+
+### Transferência de Agencia:
+
+
+
+
 
 # corrigir a tabela de participantes de dia util e dar um truncate nas metas individuais:
 
