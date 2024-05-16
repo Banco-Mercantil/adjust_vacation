@@ -9,9 +9,17 @@ Portanto, a meta do ponto de atendimento é dividida pela quantidade de dias út
 ![image](https://github.com/Banco-Mercantil/adjust_vacation/assets/88452990/5a8dbb72-5650-4002-b171-619e6c4500e4)
 
 
-# Inicializando o ajuste:
+## 🔨 Ferramentas Necessárias:
 
-O controle de agentes ativos por ponto de atendimento é armazenado na tabela 'sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util'. Essa possui todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
+Para iniciar este projeto será necessário a instalação das seguintes ferramentas:
+
+- [Visual Studio Code](https://code.visualstudio.com/download)
+- Excel
+  
+
+## Inicializando o ajuste:
+
+O controle de agentes ativos por ponto de atendimento é armazenado na tabela *sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util*. Essa possui todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
 
 As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas naas quais o colaborador estará indisponível no ponto de atendimento.
 
@@ -21,8 +29,20 @@ O primeiro passo envolve uma tratativa do formulário para que este possa ser co
 
   * [Formulário](https://docs.google.com/forms/d/132G94v3b3_ARW8Av-g0MYTq718l9n01_tJnyntrgnvk/edit#responses)
 
-Já na página, você poderá ter acesso ás respostas dos responsáveis de cada ponto de atendimento com suas respectivas solicitações. Clicando em 'Link para o app Planilhas' o arquivo será baixado para sua máquina.
+Já na página, você poderá ter acesso ás respostas dos responsáveis de cada ponto de atendimento com suas respectivas solicitações. Clicando em *Link para o app Planilhas* o arquivo será baixado para sua máquina.
 
+O primeiro tratamento a se fazer é ajustar a coluna de **matrícula**. Este campo pode conter valores com espaços, caracteres em minúsculos e a mais. Padronize este campo removendo espaços em branco, tanto a esquerda quanto a direita, deixando os caracteres em maiúsculo e com o tamanho igual a 7. Registros com tamanhos menores não deverão ser considerados.  
+
+O próximo tratamento será uma verificação nas solicitações de transferência. Para esse tipo de solicitação, os campos referentes a data deverão permanecer em branco. Execute um filtro na coluna onde o ponto de atendimento é preenchido, filtre todos os valores diferentes de vazio. Estas são as solicitações de transferência. Para esses casos, exclua todos os valores das colunas de data, deixando-os em branco. 
+
+Se tratando dos campos de datas, certifique-se que o formato do campo seja equivalente ao exemplo a seguir:
+
+``
+Exemplo de formato:
+01/01/2024
+``
+
+Ao salvar o documento, altere seu nome para ``int_forms_ferias_afastamentos`` e o salve em formato ``.csv``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no Visual Studio Code.
 
 
 
@@ -33,15 +53,6 @@ Já na página, você poderá ter acesso ás respostas dos responsáveis de cada
 ### Transferência de Agencia:
 
 
-1 - acessar [formulário de férias](https://docs.google.com/forms/d/132G94v3b3_ARW8Av-g0MYTq718l9n01_tJnyntrgnvk/edit#responses)
-
-2 - tratar excel
-
-4 - mudar nome para int_forms_ferias_afastamentos salvar como csv
-
-copiar arquivo para a pasta : K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds
-
-abrir projeto no vs code
 
 adicionar o profile do arquivo no profile do seu usuario, salvar e abrir projeto novamente.
 
