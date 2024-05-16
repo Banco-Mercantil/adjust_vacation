@@ -16,10 +16,10 @@ O controle de agentes ativos por ponto de atendimento é armazenado na tabela 's
 As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas naas quais o colaborador estará indisponível no ponto de atendimento.
 
 
-## Férias ou Afastamentos:
+### Férias ou Afastamentos:
 
 
-## Transferência de Agencia:
+### Transferência de Agencia:
 
 
 1 - acessar [formulário de férias](https://docs.google.com/forms/d/132G94v3b3_ARW8Av-g0MYTq718l9n01_tJnyntrgnvk/edit#responses)
