@@ -61,7 +61,11 @@ Agora iremos substituir o ponto e vírgula (;) por apenas vígula (,). É possí
 ## Projeto:
 
 
-Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*. O comando ``dbt seed`` irá carregar os arquivos ``.csv`` localizados no diretório ``seed-paths`` do projeto dbt ``dbt_marts_incrementais_campanhas``. Logo, abra o terminal do **VS Code** e execute o seguinte trecho de código:
+Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*. A princípio, execute o comando ``dbt debug``, no terminal, para testar a conexão do banco de dados e exibir informações para fins de depuração. Ao final da execução, uma mensagem de sucesso deverá ser exibida.
+
+<img width="321" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/01804f47-3d4e-4cbc-aed9-fa2b67656ce7">
+
+O comando ``dbt seed`` irá carregar os arquivos ``.csv`` localizados no diretório ``seed-paths`` do projeto dbt ``dbt_marts_incrementais_campanhas``. Logo, abra o terminal do **VS Code** e execute o seguinte trecho de código:
 
 ``
 dbt seed --select "int_forms_ferias_afastamentos"
@@ -76,18 +80,61 @@ ORDER BY DTA_SOLICITACAO DESC
 
 Com os novos registros da campanha vigente na tabela, iremos executar essas alterações no diretório da **AWS**. 
 
-conectar ao SSH
+Para migrar o projeto *DBT* da máquina para a *AWS* é necessário conectarmos remotamente na nuvem, através do protocolo *SSH*. Logo, no *VS Code*, no canto inferior esquerdo, há um ícone com duas setas de maior e menor que (><), selecione este para abrir uma janela remota. Um pop-up irá aparecer, você deverá selecionar a opção *Conectar-se ao Host...*.
 
-dar o camando pull para atualizar o repositorio da nuvem em sua maquina
+<img width="590" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/343d20b6-9ede-456d-b190-11eaad28f104">
 
-ir para o diretorio /home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas e substituir o arquivo
+Na sequência, selecione o host ao qual se deseja conectar: ``10.221.0.36``.
 
-dar o ./build_push_dev.sh
+<img width="575" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/044e1846-e2d8-4b1f-afc5-e1978bd83b98">
 
-executar o commit
+Uma nova *IDE* do *VS Code* será aberta e solicitará ao usuário que informe a senha de conexão:
 
-verificar a confirmação no devops
+<img width="695" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/63461ccb-0223-415c-b2f3-2e449b0acde7">
 
+Após informar a senha, o *VS Code* deverá indicar a conexão remota no canto inferior esquerdo:
+
+<img width="413" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/e4e64dbb-664a-4fe3-babc-6d63469d74a4">
+
+Agora, clique no *Explorador de Arquivos*, em seguida, *Abrir Pasta*, para navegar no diretório da máquina em nuvem.
+
+<img width="572" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/b9d56158-5e07-4896-b313-a1e803823ecd">
+
+Automaticamente o diretório do seu usuário será preenchido na barra de pesquisa ao centro, selecione o ``ok`` para entrar nele. 
+
+<img width="755" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/d3edb92f-9e33-4032-8e8d-8205890712b7">
+
+O sistema, novamente, irá se solicitar a senha, informe-a e na sequência dê o ``Enter``. Feito isso, sua *IDE* deverá se parecer com a imagem abaixo:
+
+<img width="960" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/34f59ccc-3967-4a2b-8418-0c475fbc7998">
+
+Conectato remotamente a nuvem, é necessário logar a AWS para fazer qualquer alteração no *Airflow*. Nesta fase, digite, então, a linha de comando ``aws sso login``. Um pop-up será exibido, e nele, clique o botão *Abrir*.
+
+<img width="292" alt="image" src="https://github.com/Banco-Mercantil/ssh_installation/assets/88452990/bad2ea14-77a8-422d-8a16-b6402388a3b6">
+
+Nesta etapa, o sistema irá abrir um navegador da *AWS*, autorize a conexão pelo app *Authenticator*, cliquei no botão *Confirm and continue* para seguir. Na sequência clique em *Allow access*, ao final você deverá receber esta mensagem:
+
+<img width="329" alt="image" src="https://github.com/Banco-Mercantil/ssh_installation/assets/88452990/e14052ca-0c29-4cbe-abb6-8fc0f32b4f79">
+
+Você poderá fechar o navegador neste momento e retornar ao *VS Code*. Após logado, o primeiro passo a ser feito é executar o comando ``pull`` para que os arquivos e configurações que constam no repositório sejam carregados para a sua máquina. 
+
+Utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. Clique nos *três pontinhos* e selecione a opção *Efetuar Pull*. 
+
+<img width="685" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/fd8a5e2e-3369-414c-bd63-6beeb5b86d7c">
+
+Nesta etapa, use o terminal e vá para o diretorio ``/home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas``. Substitua o arquivo ``int_forms_ferias_afastamentos.csv`` pelo mesmo arquivo que consta em sua máquina que acabou de ser atualizado. Salve as alterações.
+
+Na sequência, digite o código: ``.\build_push_dev.sh``. O sistema irá gerar um novo executável após as configurações feitas. Ao finalizar o processamento da ``build``, vamos salvar as alterações no *Airflow*. 
+
+Utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. No box do *Airflow*, digite uma mensagem relevante para salvar as alterações: ``Ajuste férias e afastamentos maio 2024`` e clique no botão *Commit*. Um pop-up de confirmação será aberto, basta clicar em *Yes*.
+
+<img width="594" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/91603c66-6012-4ad6-b940-b64ba82828ba">
+
+Na sequência, clique no botão *Sync changes* que aparecerá em seguida.
+
+Agora vamos salvar as alterações no repositório DevOps ``MB.AWS.BIZ.GED``. No box do repositório,  digite uma mensagem relevante para salvar as alterações: ``Ajuste férias e afastamentos maio 2024`` e clique no botão *Commit*. Um pop-up de confirmação será aberto, basta clicar em *Yes*.
+
+O sistema irá solicitar o usuário (matrícula) e a senha, informe-os, respectivamente, e dê o ``Enter``. Verifique a confirmação das alterações no histórico do [devops](https://devops.mercantil.com.br/Tecnologia_MB/MB/_git/MB.AWS.BIZ.GEC).
 
 
 ### Férias ou Afastamentos:
