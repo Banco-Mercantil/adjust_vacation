@@ -14,6 +14,8 @@ Portanto, a meta do ponto de atendimento é dividida pela quantidade de dias út
 Para iniciar este projeto será necessário a instalação das seguintes ferramentas:
 
 - [Visual Studio Code](https://code.visualstudio.com/download)
+- Snowflake
+- DBT
 - Excel
   
 
@@ -136,8 +138,18 @@ Agora vamos salvar as alterações no repositório DevOps ``MB.AWS.BIZ.GED``. No
 
 O sistema irá solicitar o usuário (matrícula) e a senha, informe-os, respectivamente, e dê o ``Enter``. Verifique a confirmação das alterações no histórico do [devops](https://devops.mercantil.com.br/Tecnologia_MB/MB/_git/MB.AWS.BIZ.GEC).
 
+Com a atualização dos nos registros de férias, afawstamentos e transferências na tabela ``SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS``, é necessário realizar os devidos ajustes na tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``, a qual registra todas os dias úteis do mês para cada matrícula ativa. 
+
 
 ### Férias ou Afastamentos:
+
+A começar pelo ajuste das solicitações de férias dos colaboradores, acesse a plataforma do [Snowflake](https://app.snowflake.com/kdumwgr/dda57677/w4yRXGS5uLsB/query). Vá para a guia *Worshets*, abra um novo *notebook* para digitar códigos em *SQL* e certifique de indicar a role e o data warehouse corretos:
+
+
+![An image of foo bar for GitHub Free, GitHub Pro, GitHub Team, and GitHub Enterprise Cloud](C:\Users\B045523\Pictures\Screenshots\Captura de tela 2024-05-16 183044.png)
+
+
+
 
 
 ### Transferência de Agencia:
