@@ -1,4 +1,4 @@
-# Ajuste de Férias:
+# Ajuste de Férias e Afastamentos:
 
 O real objetivo deste trabalho é demonstrar, passo a passo, como realizar os ajustes do cálculo das metas individuais de acordo com a quantidade de colaboradores ativos no ponto de atendimento do banco Mercantil.
 
