@@ -9,7 +9,18 @@ Portanto, a meta do ponto de atendimento é dividida pela quantidade de dias út
 ![image](https://github.com/Banco-Mercantil/adjust_vacation/assets/88452990/5a8dbb72-5650-4002-b171-619e6c4500e4)
 
 
-Em caso de férias e transferências 
+# Inicializando o ajuste:
+
+O controle de agentes ativos por ponto de atendimento é armazenado na tabela 'sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util'. Essa possui todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
+
+As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas naas quais o colaborador estará indisponível no ponto de atendimento.
+
+
+## Férias ou Afastamentos:
+
+
+## Transferência de Agencia:
+
 
 1 - acessar [formulário de férias](https://docs.google.com/forms/d/132G94v3b3_ARW8Av-g0MYTq718l9n01_tJnyntrgnvk/edit#responses)
 
