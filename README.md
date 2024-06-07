@@ -17,16 +17,31 @@ Para iniciar este projeto será necessário a instalação das seguintes ferrame
 - Snowflake
 - DBT
 - Excel
+
   
+## 🚀 Inicializando o projeto:
 
-## Inicializando o ajuste:
+### 1.0 Paralisação da campanha atual:
 
-O controle de agentes ativos por ponto de atendimento é armazenado nas tabelas *sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util* e *sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int__participantes_dia_util*. Elas possuem todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
+Inicialmente, para que possamos ajustar os devidos paramêtros, a primeira ação a ser cumprida envolve paralisar a atualização dos pacotes de campanha que estão ativos a fim de que não haja nenhum tipo de competição entre o arquivo atual e o novo arquivo que iremos migrar.
 
-As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas, nas quais o colaborador estará indisponível no ponto de atendimento.
+Para tal, acesse o site do *[Airflow](https://airflow.real-dev.n-mercantil.com.br/home)* com seu login e senha. Ao entrar, você verá todas as *DAGs* disponíveis do banco. Esta, por sua vez, é uma coleção de tarefas organizadas que você quer programar e executar a qualquer instante.
+
+Com o site aberto, localize a *DAG* na qual você estará fazendo a atualização do projeto e clique em seu nome. Você será redirecionado para uma nova tela e nela basta pausar a atualização agendada, conforme a imagem abaixo:
+
+![image](https://github.com/Banco-Mercantil/campaign_update/assets/88452990/9eebadbe-8205-41bb-8308-ee214eb7293b)
+
+Feito isso. Podemos dar sequência na atualização da campanha.
 
 
-### Formulário:
+### 2.0 Inicializando o ajuste:
+
+O controle de agentes ativos por ponto de atendimento é armazenado nas tabelas ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util`` e ``sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int__participantes_dia_util``. Elas possuem todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias e afastamentos.
+
+As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento, informando o tipo e as respectivas datas, nas quais o colaborador estará indisponível no ponto de atendimento.
+
+
+### 2.1 Formulário:
 
 O primeiro passo envolve uma tratativa do formulário para que este possa ser compilado devidamente. Para acessá-lo, basta clicar no seguinte link e você será redirecionado para sua página. 
 
@@ -55,7 +70,7 @@ Exemplo de formato: 2024-01-01 10:30:10
 O proxímo passo é salvar o documento. Ao fazê-lo, altere o nome do arquivo para ``int_forms_ferias_afastamentos`` e salve-o no formato ``.csv (separado por vírgula)``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela, posteriormente, no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no **Visual Studio Code**.
 
 
-## Arquivo .CSV:
+### 2.2 Arquivo .CSV:
 
 Feito isso, caso seja a primeira vez a se executar este projeto em sua máquina, será necessário configurar o arquivo ``profiles.yml``. Este arquivo se encontra no diretório ``C:\Users\XXXXXX\.dbt``. Copie o código contido no arquivo ``profile.yml`` do projeto ``dbt_marts_incrementais_campanhas`` e adicione-o no arquivo ``profiles.yml`` da sua máquina. Salve o arquivo e abra o projeto novamente. Caso não seja a primeira vez, ignore a etapa anterior e siga para os próximos passos.
 
@@ -70,7 +85,7 @@ Esta tabela, por sua vez, é usada como base para a tabela ``sdx_excelencia_come
 A próxima mudança envolve substituir o ponto e vírgula (;) pela vígula (,). É possível fazer isso com o atalho ``Ctrl + f``. Um box será aberto no canto superior, clique na seta que antecede o box de escrita. Um novo box irá aparecer abaixo. No primeiro box, digite o valor no qual deseja buscar para substituir, no caso, o ponto e vírgula (;). No segundo, digite o valor o qual você deseja que seja o substituto, no caso, a vírgula (,). Salve o arquivo posteriormente.
 
 
-## Migração de dados para o Snowflake:
+### 2.3 Migração de dados para o Snowflake:
 
 Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*, o *Snowflake*. Com o projeto ``dbt_marts_incrementais_campanhas`` aberto no **VS Code**, use o atalho ``Ctrl + '`` para abrir o terminal da *IDE*. 
 
@@ -91,6 +106,9 @@ Afim de verificar as novas atualizações, basta consultar, no **Snowflake**, a 
 SELECT * FROM sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.int_forms_ferias_afastamentos
 ORDER BY dta_solicitacao
 ``
+
+
+### 2.4 Migração de dados para a nuvem da AWS:
 
 Com os novos registros de férias e afastamentos da campanha vigente na tabela, iremos executar essas alterações no diretório do **Devops**, na **AWS**. 
 
@@ -138,61 +156,68 @@ Após logado, o primeiro passo a ser feito é executar um ``pull`` para que os a
 
 <img width="685" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/fd8a5e2e-3369-414c-bd63-6beeb5b86d7c">
 
-Nesta etapa, use o terminal e vá para o diretorio ``/home/pfernandes/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas``. Substitua o arquivo ``int_forms_ferias_afastamentos.csv`` pelo mesmo arquivo que consta em sua máquina que acabou de ser atualizado. Salve as alterações.
+Feito isso, utilize o atalho ``Ctrl + Shift + e`` para acessar o **Explorador** do **VS Code**. Através dele, navegue até a pasta ``/home/XXXXXXX/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas/seeds``. Aqui, exclua o arquivo ``int_forms_ferias_afastamentos.csv``, pois esse encontra-se desatualizado para a campanha vigente.
 
-Na sequência, digite o código: ``.\build_push_dev.sh``. O sistema irá gerar um novo executável após as configurações feitas. Ao finalizar o processamento da ``build``, vamos salvar as alterações no *Airflow*. 
+Agora, no **Explorador de Arquivos** da máquina, vá para o arquivo ``dbt_marts_incrementais_campanhas``, o qual se encontra atualizado com as novas solicitações de férias e afastamentos, através do caminho: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas``. Entre na pasta ``seeds`` e copie o arquivo ``int_forms_ferias_afastamentos.csv``.
 
-Utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. No box do *Airflow*, digite uma mensagem relevante para salvar as alterações: ``Ajuste férias e afastamentos maio 2024`` e clique no botão *Commit*. Um pop-up de confirmação será aberto, basta clicar em *Yes*.
+Retorne para o **VS Code**, conectado a **AWS**, e cole o arquivo copiado na pasta ``seeds`` do projeto ``/home/XXXXXXX/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas``.
+
+![image](https://github.com/Banco-Mercantil/adjust_vacation_transfer/assets/88452990/a2a0e5d4-e0ef-4944-961b-1d3b21d7703e)
+
+Salve as alterações.
+
+Nesta etapa, use o terminal e navegue para a pasta ``XXXXXXX@ip-10-221-0-36:/home/XXXXXX/MB.AWS.BIZ.GEC/1_Campanhas/dbt_marts_incrementais_campanhas``.
+
+Na sequência, digite o código: ``.\build_push_dev.sh``. O sistema irá gerar um novo executável após as configurações feitas. Ao finalizar o processamento da ``build``, vamos salvar as alterações que acabamos de migrar para a nuvem. 
+
+Utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. No box do servidor da **AWS**, ``MB.AWS.BIZ.GED``, digite uma mensagem relevante para salvar as alterações: ``Ajuste férias e afastamentos maio 2024`` e clique no botão *Commit* e em seguida clique no botão *Sync changes*. Um pop-up de confirmação será aberto, basta clicar em *Yes*.
 
 <img width="594" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/91603c66-6012-4ad6-b940-b64ba82828ba">
 
-Na sequência, clique no botão *Sync changes* que aparecerá em seguida.
 
-Agora vamos salvar as alterações no repositório DevOps ``MB.AWS.BIZ.GED``. No box do repositório,  digite uma mensagem relevante para salvar as alterações: ``Ajuste férias e afastamentos maio 2024`` e clique no botão *Commit*. Um pop-up de confirmação será aberto, basta clicar em *Yes*.
+### 2.5 Limpar as tabelas do esquema vigente:
 
-O sistema irá solicitar o usuário (matrícula) e a senha, informe-os, respectivamente, e dê o ``Enter``. Verifique a confirmação das alterações no histórico do [devops](https://devops.mercantil.com.br/Tecnologia_MB/MB/_git/MB.AWS.BIZ.GEC).
+Com a atualização dos registros de férias e afastamentos na tabela ``sdx_excelencia_comercial.camp_incentivo_marts_auxiliares.int_forms_ferias_afastamentos``, é necessário realizar os devidos ajustes nas tabelas vigentes da campanha. Desta forma, para que haja o reprocessamento dos dados e, posteriormente, o cálculo das metas individuais dos colaboradores, levando em consideração a quantidade de agentes ativos em cada ponto de atendimento por dia útil do mês.
 
-Com a atualização dos nos registros de férias, afawstamentos e transferências na tabela ``SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS``, é necessário realizar os devidos ajustes na tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``, a qual registra todas os dias úteis do mês para cada matrícula ativa. 
+Para isso, em uma guia do navegar, acesse o [Snowflake](https://app.snowflake.com/kdumwgr/dda57677/w4a61L0P8DQR/query). Em um *notebook* (editor de texto da ferramenta), execute as seguintes instruções para limpar os dados das respectivas tabelas.
 
+#### 2.5.1 Campanha Rede:
 
-### Férias ou Afastamentos:
+--LIMPA TABELA DE PARTICIPANTES POR DIA UTIL 
+--OBs.: Esta tabela não poderá ficar sendo truncada
+TRUNCATE TABLE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util;
 
-A começar pelo ajuste das solicitações de férias dos colaboradores, acesse a plataforma do [Snowflake](https://app.snowflake.com/kdumwgr/dda57677/w4yRXGS5uLsB/query). Vá para a guia *Worshets*, abra um novo *notebook* para digitar códigos em *SQL* e certifique de indicar a role e o data warehouse corretos:
+--LIMPA TABELA DE METAS DE EMPRESTIMO
+TRUNCATE TABLE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int_metas__individuais;
 
-``
-Role: SNFLK_AD_GERENCIA_EXCELENCIA_COMERCIAL
-Data warehouse: WH_DEV
-``
+--LIMPA TABELA DE METAS DE DPZ
+TRUNCATE TABLE sdx_excelencia_comercial.camp_incentivo__rede_vigente.int_dpz__metas;
 
-Em seguida, copie e cole o trecho de código contido no arquivo [ajuste_ferias](https://github.com/Banco-Mercantil/adjust_vacation_transfer/blob/main/ajuste_ferias.sql). 
+#### 2.5.2 Campanha Bem Aqui:
 
-Ao executar a query, todos os registros que compreende o espaço de tempo no qual o colaborador estará indisponível no ponto de atendimento serão deletados da tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``. 
+--LIMPA TABELA DE PARTICIPANTES POR DIA UTIL 
+--OBs.: Esta tabela não poderá ficar sendo truncada
+TRUNCATE TABLE sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int__participantes_dia_util;
 
-
-### Transferência de Agencia:
-
-O mesmo processo deverá ser executado para o tratamento dos casos de transferência, porém, aqui os registros não serão deletados, apenas sofrerão uma atualização no campo que referencia o código do ponto de atendimento do colaborador. 
-
-Abra um novo *notebook*, agora para executar um segundo trecho de código em *SQL* para a tratativa das solicitações de transferências. 
-
-Copie e cole o trecho de código contido no arquivo [ajuste_transferencia](https://github.com/Banco-Mercantil/adjust_vacation_transfer/blob/main/ajuste_transferencia.sql).
-
-Ao executar a query, os registros dos colaboradores serão atualizados com novas informações do ponto de atendimento para o qual este irá atuar da tabela ``sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util``.
+--LIMPA TABELA DE METAS DE EMPRESTIMO
+TRUNCATE TABLE sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int_metas__individuais;
 
 
-## Dar um truncate nas metas individuais:
+### 3.0 Habilitar execução da DAG no Airflow:
+
+Feito todas as devidas modificações, é possível reabilitar a execução agendada do projeto ``dbt_marts_incrementais_campanhas``.
+
+Para tal, acesse o site do *[Airflow](https://airflow.real-dev.n-mercantil.com.br/home)* com seu login e senha.
+
+Com o site aberto, localize a *DAG* ``dbt-marts_incrementais_campanhas`` e clique em seu nome. Você será redirecionado para uma nova tela e nela basta habilitar a atualização agendada, conforme a imagem abaixo:
+
+![image](https://github.com/Banco-Mercantil/campaign_update/assets/88452990/9eebadbe-8205-41bb-8308-ee214eb7293b)
 
 
+### 4.0 Visualização de ajustes nos dashboards:
 
+Afim de confirmar as alterações acima nos dashboards, basta aguarda a próxima atualização de ambos, CAMAPANHA INCENTIVO REDE e CAMAPANHA INCENTIVO BEM AQUI. Após atualizado, as alterações deverão estar visíveis nos respectivos BI's.
 
-
-
-
-
-
-
-
-3 - int_metas__individuais
 
 
 
