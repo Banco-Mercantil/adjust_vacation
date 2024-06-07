@@ -63,7 +63,9 @@ Com o projeto ``dbt_marts_incrementais_campanhas`` aberto no **VS Code**, vá at
 
 ``DTA_SOLICITACAO,E_MAIL,MATRICULA,CAMPANHA,COLAB_PROMOVIDO,NOM_PTO_TRANSF,DTA_SAIDA,DTA_RETORNO``
 
-Esta mudança é feita para que o projeto, ao executar, reconheça os campos da tabela ``sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.mrt_ferias_afastamentos``, já existente no banco de dados, para atualização de seus registros com as informações do arquivo ``int_forms_ferias_afastamentos.csv``.
+Esta mudança é feita para que o projeto, ao executar, reconheça os campos da tabela ``sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.int_forms_ferias_afastamentos``, já existente no banco de dados, para atualização de seus registros com as informações do arquivo ``int_forms_ferias_afastamentos.csv``.
+
+Esta tabela, por sua vez, é usada como base para a tabela ``sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.mrt_ferias_afastamentos``, que é a base da tabela ``sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int__participantes_dia_util``, na qual consta todos os dias úteis para cada matrícula ativa durante o período da campanha vigente.
 
 A próxima mudança envolve substituir o ponto e vírgula (;) pela vígula (,). É possível fazer isso com o atalho ``Ctrl + f``. Um box será aberto no canto superior, clique na seta que antecede o box de escrita. Um novo box irá aparecer abaixo. No primeiro box, digite o valor no qual deseja buscar para substituir, no caso, o ponto e vírgula (;). No segundo, digite o valor o qual você deseja que seja o substituto, no caso, a vírgula (,). Salve o arquivo posteriormente.
 
@@ -83,16 +85,16 @@ Exemplo:
 dbt seed --select "int_forms_ferias_afastamentos"
 ``
 
-Afim de verificar as novas atualizações, basta consultar, no **Snowflake**, a tabela ``SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS``. Em um novo *notebook* cole a seguinte query:
+Afim de verificar as novas atualizações, basta consultar, no **Snowflake**, a tabela ``sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.int_forms_ferias_afastamentos``. Em um novo *notebook* cole a seguinte query:
 
 ``
-SELECT * FROM SDX_EXCELENCIA_COMERCIAL.CAMP_INCENTIVO__MARTS_AUXILIARES.INT_FORMS_FERIAS_AFASTAMENTOS
-ORDER BY DTA_SOLICITACAO DESC
+SELECT * FROM sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.int_forms_ferias_afastamentos
+ORDER BY dta_solicitacao
 ``
 
-Com os novos registros da campanha vigente na tabela, iremos executar essas alterações no diretório da **AWS**. 
+Com os novos registros de férias e afastamentos da campanha vigente na tabela, iremos executar essas alterações no diretório do **Devops**, na **AWS**. 
 
-Para migrar o projeto *DBT* da máquina para a *AWS* é necessário conectarmos remotamente na nuvem, através do protocolo *SSH*. Logo, no *VS Code*, no canto inferior esquerdo, há um ícone com duas setas de maior e menor que (><), selecione este para abrir uma janela remota. Um pop-up irá aparecer, você deverá selecionar a opção *Conectar-se ao Host...*.
+Para migrar o projeto **DBT** da máquina para a **AWS** é necessário conectarmos remotamente na nuvem, através do protocolo **SSH**. Logo, no **VS Code**, no canto inferior esquerdo, há um ícone com duas setas de maior e menor que (><), selecione este para abrir uma janela remota. Um pop-up irá aparecer, você deverá selecionar a opção *Conectar-se ao Host...*.
 
 <img width="590" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/343d20b6-9ede-456d-b190-11eaad28f104">
 
@@ -100,11 +102,11 @@ Na sequência, selecione o host ao qual se deseja conectar: ``10.221.0.36``.
 
 <img width="575" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/044e1846-e2d8-4b1f-afc5-e1978bd83b98">
 
-Uma nova *IDE* do *VS Code* será aberta e solicitará ao usuário que informe a senha de conexão:
+Uma nova **IDE** do **VS Code** será aberta e solicitará ao usuário que informe a senha de conexão:
 
 <img width="695" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/63461ccb-0223-415c-b2f3-2e449b0acde7">
 
-Após informar a senha, o *VS Code* deverá indicar a conexão remota no canto inferior esquerdo:
+Após informar a senha, o **VS Code** deverá indicar a conexão remota no canto inferior esquerdo:
 
 <img width="413" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/e4e64dbb-664a-4fe3-babc-6d63469d74a4">
 
@@ -116,21 +118,23 @@ Automaticamente o diretório do seu usuário será preenchido na barra de pesqui
 
 <img width="755" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/d3edb92f-9e33-4032-8e8d-8205890712b7">
 
-O sistema, novamente, irá se solicitar a senha, informe-a e na sequência dê o ``Enter``. Feito isso, sua *IDE* deverá se parecer com a imagem abaixo:
+O sistema, novamente, irá solicitar a senha, informe-a e na sequência dê o ``Enter``. Feito isso, sua **IDE** deverá se parecer com a imagem abaixo:
 
 <img width="960" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/34f59ccc-3967-4a2b-8418-0c475fbc7998">
 
-Conectato remotamente a nuvem, é necessário logar a AWS para fazer qualquer alteração no *Airflow*. Nesta fase, digite, então, a linha de comando ``aws sso login``. Um pop-up será exibido, e nele, clique o botão *Abrir*.
+Conectato remotamente a nuvem, é necessário fazer login na **AWS** para salvar qualquer alteração em seu diretório. Logo, com o atalho ``Ctrl + '``, abra o terminal do **VS Code** e, em seguida, digite a linha de comando ``aws sso login``. 
+
+Um pop-up será exibido, e nele, clique o botão *Abrir*.
 
 <img width="292" alt="image" src="https://github.com/Banco-Mercantil/ssh_installation/assets/88452990/bad2ea14-77a8-422d-8a16-b6402388a3b6">
 
-Nesta etapa, o sistema irá abrir um navegador da *AWS*, autorize a conexão pelo app *Authenticator*, cliquei no botão *Confirm and continue* para seguir. Na sequência clique em *Allow access*, ao final você deverá receber esta mensagem:
+Nesta etapa, o sistema irá abrir uma guia da **AWS** no navegador, autorize a conexão pelo app *Authenticator*, cliquei no botão *Confirm and continue* para seguir. Na sequência clique em *Allow access*, ao final você deverá visualizar essa mensagem na guia do navegador:
 
 <img width="329" alt="image" src="https://github.com/Banco-Mercantil/ssh_installation/assets/88452990/e14052ca-0c29-4cbe-abb6-8fc0f32b4f79">
 
-Você poderá fechar o navegador neste momento e retornar ao *VS Code*. Após logado, o primeiro passo a ser feito é executar o comando ``pull`` para que os arquivos e configurações que constam no repositório sejam carregados para a sua máquina. 
+Você poderá fechar a guia aberta neste momento e retornar ao **VS Code**. 
 
-Utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. Clique nos *três pontinhos* e selecione a opção *Efetuar Pull*. 
+Após logado, o primeiro passo a ser feito é executar um ``pull`` para que os arquivos e configurações que constam no repositório sejam carregados para a sua máquina. Para isso, utilize o atalho ``Ctrl + Shift + G`` para acessar a guia de controle do código-fonte. Você deverá visualizar um box, na lateral esquerda, referente ao servidor da **AWS** e um segundo box, logo abaixo, referente ao **Airflow**. Clique nos *três pontinhos* e selecione a opção *Efetuar Pull*. 
 
 <img width="685" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/fd8a5e2e-3369-414c-bd63-6beeb5b86d7c">
 
