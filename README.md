@@ -21,9 +21,9 @@ Para iniciar este projeto será necessário a instalação das seguintes ferrame
 
 ## Inicializando o ajuste:
 
-O controle de agentes ativos por ponto de atendimento é armazenado na tabela *sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util*. Essa possui todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
+O controle de agentes ativos por ponto de atendimento é armazenado nas tabelas *sdx_excelencia_comercial.camp_incentivo__rede_vigente.int__participantes_dia_util* e *sdx_excelencia_comercial.camp_incentivo__bemaqui_vigente.int__participantes_dia_util*. Elas possuem todos os dias úteis do mês vigente para cada matrícula ativa. O trabalho a ser realizado aqui é atualizar esta tabela com as devidas correções de férias, afastamentos e transferências.
 
-As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas naas quais o colaborador estará indisponível no ponto de atendimento.
+As informações de férias, afastamentos e transferências é nos passada através do formulário de solicitações. Os responsáveis encaminham uma resposta ao documento informando o tipo e as respectivas datas, nas quais o colaborador estará indisponível no ponto de atendimento.
 
 
 ### Formulário:
@@ -36,40 +36,50 @@ Já na página, você poderá ter acesso ás respostas dos responsáveis de cada
 
 O primeiro tratamento a se fazer é eliminar todas as respostas das campanhas anteriores, deixando apenas os novos registros da campanha vigente. Faça isso, filtrando a coluna **campanha** com todos os registros com excessão da camapanha do mês vigente. Posteriormente, exclua todas as linhas. Limpe o filtro e agora você terá apenas as solicitações do mês. 
 
-Em seguida, é necessário ajustar a coluna de **matrícula**. Este campo pode conter valores com espaços, caracteres em minúsculos e a mais. Padronize este campo removendo espaços em branco, tanto a esquerda quanto a direita, deixando os caracteres em maiúsculo e com o tamanho igual a 7. Registros com tamanhos menores não deverão ser considerados.  
+Em seguida, é necessário ajustar a coluna de **matrícula**. Este campo pode conter valores com espaços, caracteres em minúsculos e a caracteres a mais. Padronize este campo removendo espaços em branco, tanto a esquerda quanto a direita, deixando os caracteres em maiúsculo e com o tamanho igual a 7. Registros com tamanhos menores não deverão ser considerados.
 
-O próximo tratamento será uma verificação nas solicitações de transferência. Para esse tipo de solicitação, os campos referentes a data deverão permanecer em branco. Execute um filtro na coluna onde o ponto de atendimento é preenchido, filtre todos os valores diferentes de vazio. Estas são as solicitações de transferência. Para esses casos, exclua todos os valores das colunas de data, deixando-os em branco. 
+O próximo tratamento será uma verificação nas solicitações de transferência. Para esse tipo de solicitação, os campos referentes as datas de início e data de retorno deverão permanecer em branco. Execute um filtro na coluna de **transferência**, onde o ponto de atendimento é preenchido, filtre todos os valores diferentes de vazio. Estas são as solicitações de transferência. Para esses casos, exclua todos os valores das colunas de data de início e data de retorno, deixando-os em branco. 
 
-Se tratando dos campos de datas, certifique-se que o formato do campo seja equivalente ao exemplo a seguir:
+Se tratando dos campos de **data de início** e **data de retorno**, certifique-se que o formato do campo seja equivalente ao exemplo a seguir:
 
 ``
 Exemplo de formato: 01/01/2024
 ``
 
-Ao salvar o documento, altere seu nome para ``int_forms_ferias_afastamentos`` e o salve em formato ``.csv``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no **Visual Studio Code**.
+Já para o campo de **data da solicitação**, o formato deverá ser ``aaaa-mm-dd hh:mm:ss``, equivalente ao exemplo a seguir:
+
+``
+Exemplo de formato: 2024-01-01 10:30:10
+``
+
+O proxímo passo é salvar o documento. Ao fazê-lo, altere o nome do arquivo para ``int_forms_ferias_afastamentos`` e salve-o no formato ``.csv (separado por vírgula)``, garantindo que ele possa ser interpretado pelo código e transformado em uma tabela, posteriormente, no banco de dados. Feito isso, copie o arquivo, cole-o na pasta: ``K:\GEC\2024\04. Dados\0_Snowflake\1_Campanhas\dbt_marts_incrementais_campanhas\seeds`` e abra o projeto ``dbt_marts_incrementais_campanhas`` no **Visual Studio Code**.
 
 
 ## Arquivo .CSV:
 
 Feito isso, caso seja a primeira vez a se executar este projeto em sua máquina, será necessário configurar o arquivo ``profiles.yml``. Este arquivo se encontra no diretório ``C:\Users\XXXXXX\.dbt``. Copie o código contido no arquivo ``profile.yml`` do projeto ``dbt_marts_incrementais_campanhas`` e adicione-o no arquivo ``profiles.yml`` da sua máquina. Salve o arquivo e abra o projeto novamente. Caso não seja a primeira vez, ignore a etapa anterior e siga para os próximos passos.
 
-Abra o arquivo ``int_forms_ferias_afastamentos.csv`` no **VS Code**, substitua o cabeçalho do arquivo, ou seja, a primeira linha, para: 
+Com o projeto ``dbt_marts_incrementais_campanhas`` aberto no **VS Code**, vá até o arquivo ``int_forms_ferias_afastamentos.csv``, clique nele para abri-lo. A primeira alteração a ser feita neste arquivo ``.csv`` será em seu cabeçalho, ou seja, a primeira linha do arquivo. Substitua-o para: 
 
 ``DTA_SOLICITACAO,E_MAIL,MATRICULA,CAMPANHA,COLAB_PROMOVIDO,NOM_PTO_TRANSF,DTA_SAIDA,DTA_RETORNO``
 
-Agora iremos substituir o ponto e vírgula (;) por apenas vígula (,). É possível fazer isso com o atalho ``Ctrl + f``. Um box será aberto no canto superior, clique na seta que antecede o box de escrita. Um novo box irá aparecer. No primeiro, digite o valor no qual deseja buscar para substituir, no caso, o ponto e vírgula (;). No segundo, digite o valor o qual você deseja que seja o substituto, no caso, a vírgula (,). Salve o arquivo.
+Esta mudança é feita para que o projeto, ao executar, reconheça os campos da tabela ``sdx_excelencia_comercial.camp_incentivo__marts_auxiliares.mrt_ferias_afastamentos``, já existente no banco de dados, para atualização de seus registros com as informações do arquivo ``int_forms_ferias_afastamentos.csv``.
+
+A próxima mudança envolve substituir o ponto e vírgula (;) pela vígula (,). É possível fazer isso com o atalho ``Ctrl + f``. Um box será aberto no canto superior, clique na seta que antecede o box de escrita. Um novo box irá aparecer abaixo. No primeiro box, digite o valor no qual deseja buscar para substituir, no caso, o ponto e vírgula (;). No segundo, digite o valor o qual você deseja que seja o substituto, no caso, a vírgula (,). Salve o arquivo posteriormente.
 
 
-## Projeto:
+## Migração de dados para o Snowflake:
 
+Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*, o *Snowflake*. Com o projeto ``dbt_marts_incrementais_campanhas`` aberto no **VS Code**, use o atalho ``Ctrl + '`` para abrir o terminal da *IDE*. 
 
-Tratado o arquivo ``.csv``, iremos migrar os registros da planilha para o nosso *data warehouse*. A princípio, execute o comando ``dbt debug``, no terminal, para testar a conexão do banco de dados e exibir informações para fins de depuração. Ao final da execução, uma mensagem de sucesso deverá ser exibida.
+A princípio, execute o comando ``dbt debug``, no terminal, para testar a conexão do banco de dados. Certifique que as informações de coexão exibidas estejam corretas como o esquema, o usuário e a senha. Ao final da execução, uma mensagem de sucesso deverá ser exibida.
 
 <img width="321" alt="image" src="https://github.com/Banco-Mercantil/campaign_update/assets/88452990/01804f47-3d4e-4cbc-aed9-fa2b67656ce7">
 
-O comando ``dbt seed`` irá carregar os arquivos ``.csv`` localizados no diretório ``seed-paths`` do projeto dbt ``dbt_marts_incrementais_campanhas``. Logo, abra o terminal do **VS Code** e execute o seguinte trecho de código:
+Em seguida, ainda no terminal, execute o comando ``dbt seed``, conforme exemplo abaixo. Este será responsável por carregar os arquivos ``.csv`` localizados no diretório ``seed-paths`` do projeto dbt ``dbt_marts_incrementais_campanhas``.
 
 ``
+Exemplo:
 dbt seed --select "int_forms_ferias_afastamentos"
 ``
 
